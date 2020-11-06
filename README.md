@@ -1,6 +1,6 @@
 # CS 50 Artifical Intelligence with python
-
-## Lecture 0 - Search
+- [CS50-AI](https://cs50.harvard.edu/ai/2020/)
+## Lectures
 
 [Lecture 0 - Search](search):
 - **Uninformed search**: Search strategy that uses no problem-specific knowledge
