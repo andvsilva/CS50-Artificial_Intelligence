@@ -69,6 +69,7 @@ def main():
     if target is None:
         sys.exit("Person not found.")
 
+    print("Searching...")
     path = shortest_path(source, target)
 
     if path is None:
@@ -83,6 +84,16 @@ def main():
             movie = movies[path[i + 1][0]]["title"]
             print(f"{i + 1}: {person1} and {person2} starred in {movie}")
 
+def get_solution(node, target):
+    # If node is the goal, then we have a solution
+    if node.state == target:
+        path = []
+        while node.parent is not None:
+            path.append((node.action, node.state))
+            node = node.parent
+        path.reverse()
+        return path
+    return None
 
 def shortest_path(source, target):
     """
@@ -91,9 +102,46 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
+    # Keep track of number of states explored
+    num_explored = 0
 
-    # TODO
-    raise NotImplementedError
+    # Initialize frontier to just the starting position
+    start = Node(state=source, parent=None, action=None)
+    frontier = QueueFrontier() # Breadth First search
+    #frontier = StackFrontier() # Depth First search
+    frontier.add(start)
+
+    # Initialize an empty explored set
+    explored = set()
+
+    # Keep looping until solution found
+    while True:
+
+        # If nothing left in frontier, then no path
+        if frontier.empty():
+            return None
+
+        # Choose a node from the frontier
+        node = frontier.remove()
+        num_explored += 1
+
+        solution = get_solution(node, target)
+        if solution:
+            return solution
+
+        # Mark node as explored
+        explored.add(node.state)
+
+        # Add neighbors to frontier
+        for movie, state in neighbors_for_person(node.state):
+            if not frontier.contains_state(state) and state not in explored:
+                child = Node(state=state, parent=node, action=movie)
+                solution = get_solution(child, target)
+                if solution:
+                    return solution
+                frontier.add(child)
+
+    return None
 
 
 def person_id_for_name(name):
